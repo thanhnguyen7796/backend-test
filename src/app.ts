@@ -3,7 +3,7 @@ import express, {Request} from 'express';
 const app = express();
 import {json} from 'body-parser';
 
-import { IssueModel, UserModel, CategoriesIssueModel } from '../models/db';
+import { IssueModel, UserModel, CategoriesIssueModel, OrganizationsModel } from '../models/db';
 import { Sequelize, Op } from 'sequelize';
 import { sortBy } from 'lodash';
 const jsonParser = json()
@@ -190,6 +190,43 @@ app.post('/issues', jsonParser, async ({body}: Request<{}, {}, {
             order: [[body.sortBy ? body.sortBy : 'updatedAt', body.sortDirection]],
             offset: body.page * body.size,
             limit: (body.page + 1) * body.size,
+        });
+        res.send(items)
+    } catch (error) {
+        console.log(error);
+        
+        res.send(500);
+    }
+    
+});
+
+
+app.post('/issues-by-organize', jsonParser, async ({body}: Request<{}, {}, {
+    startDate: string,
+    endDate: number,
+
+}>, res) => {
+    
+    try {
+        const items: any = await IssueModel.findAll({
+            group: [`${IssueModel.name}.organizationId`],
+            include: [
+                {
+                    model: OrganizationsModel,
+                    required: true,
+                    attributes: [
+                        `id`,
+                        `name`,
+                    ],
+                    where: {
+                        isActive: true
+                    }
+                }
+            ],
+            where: {
+                createdAt: [body.startDate, body.endDate]
+            }
+            
         });
         res.send(items)
     } catch (error) {
