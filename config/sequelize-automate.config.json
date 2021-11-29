@@ -1,0 +1,16 @@
+{
+    "dbOptions": {
+      "database": "halt",
+      "username": "root",
+      "password": "viatick",
+      "dialect": "mysql",
+      "host": "13.212.32.185",
+      "port": 3306,
+      "logging": false
+    },
+    "options": {
+      "type": "ts",
+      "dir": "models"
+    }
+  }
+  
